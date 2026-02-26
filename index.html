@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLASSIFIED SYSTEM</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Courier New, monospace;}
+body{
+background:#000814;
+color:#00bfff;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+}
+
+/* خلفية خطوط */
+body::before{
+content:"";
+position:absolute;
+width:200%;
+height:200%;
+background: repeating-linear-gradient(
+0deg,
+rgba(0,191,255,0.05) 0px,
+rgba(0,191,255,0.05) 2px,
+transparent 2px,
+transparent 40px
+);
+animation: scan 6s linear infinite;
+}
+@keyframes scan{
+from{ transform:translateY(-50%);}
+to{ transform:translateY(0%);}
+}
+
+.container{
+position:relative;
+z-index:2;
+text-align:center;
+width:90%;
+max-width:550px;
+}
+
+/* Loader */
+#loader h1{margin-bottom:20px;}
+.countdown{font-size:50px;}
+
+/* موجات */
+.wave{
+display:flex;
+justify-content:center;
+align-items:flex-end;
+gap:6px;
+margin-bottom:30px;
+}
+.bar{
+width:6px;
+height:30px;
+background:#00bfff;
+box-shadow:0 0 15px #00bfff;
+animation:wave 1.2s infinite ease-in-out;
+}
+.bar:nth-child(2){animation-delay:.1s}
+.bar:nth-child(3){animation-delay:.2s}
+.bar:nth-child(4){animation-delay:.3s}
+.bar:nth-child(5){animation-delay:.4s}
+.bar:nth-child(6){animation-delay:.5s}
+.bar:nth-child(7){animation-delay:.6s}
+@keyframes wave{
+0%,100%{height:20px}
+50%{height:90px}
+}
+
+h1{
+margin-bottom:20px;
+text-shadow:0 0 20px #00bfff;
+}
+
+/* Glitch */
+.glitch{
+position:relative;
+}
+.glitch::before,
+.glitch::after{
+content:attr(data-text);
+position:absolute;
+left:0;
+}
+.glitch::before{
+animation:glitchTop 1s infinite linear alternate-reverse;
+color:#00ffff;
+}
+.glitch::after{
+animation:glitchBottom 1s infinite linear alternate-reverse;
+color:#0088ff;
+}
+@keyframes glitchTop{
+0%{clip-path:inset(0 0 80% 0)}
+100%{clip-path:inset(0 0 10% 0)}
+}
+@keyframes glitchBottom{
+0%{clip-path:inset(80% 0 0 0)}
+100%{clip-path:inset(10% 0 0 0)}
+}
+
+input{
+width:100%;
+padding:10px;
+background:transparent;
+border:1px solid #00bfff;
+color:#00bfff;
+text-align:center;
+box-shadow:0 0 10px #00bfff;
+}
+
+button{
+width:100%;
+margin-top:15px;
+padding:10px;
+background:#00bfff;
+border:none;
+cursor:pointer;
+font-weight:bold;
+color:black;
+}
+
+.message{margin-top:15px;}
+.success{color:#00ff99;}
+.error{color:#ff3b3b;}
+
+/* اهتزاز */
+.shake{animation:shake .3s;}
+@keyframes shake{
+0%{transform:translateX(0)}
+25%{transform:translateX(-6px)}
+50%{transform:translateX(6px)}
+75%{transform:translateX(-6px)}
+100%{transform:translateX(0)}
+}
+
+.locked{
+color:red;
+font-size:22px;
+margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<!-- Loader -->
+<div id="loader">
+<h1>Establishing Secure Connection...</h1>
+<div class="countdown" id="count">3</div>
+</div>
+
+<!-- System -->
+<div id="system" style="display:none;">
+
+<div class="wave">
+<div class="bar"></div><div class="bar"></div><div class="bar"></div>
+<div class="bar"></div><div class="bar"></div><div class="bar"></div>
+<div class="bar"></div>
+</div>
+
+<h1 class="glitch" id="typing" data-text=""></h1>
+
+<p>IP: 192.168.47.221</p>
+<p>ACCESS LEVEL: CLASSIFIED</p>
+<p id="loginTime"></p>
+
+<div id="loginBox">
+<p>ENTER PASSWORD:</p>
+<input type="password" id="password">
+<button onclick="checkPassword()">AUTHENTICATE</button>
+<div id="msg" class="message"></div>
+</div>
+
+<div id="goalBox" style="display:none;">
+<p>MISSION OBJECTIVE:</p>
+<input type="text" id="goal">
+<button onclick="checkGoal()">VERIFY</button>
+<div id="goalMsg" class="message"></div>
+</div>
+
+<div id="locked" class="locked" style="display:none;">
+SYSTEM LOCKED
+</div>
+
+</div>
+</div>
+
+<script>
+let attempts=3;
+
+/* Countdown */
+let count=3;
+let counter=setInterval(()=>{
+count--;
+document.getElementById("count").innerText=count;
+if(count==0){
+clearInterval(counter);
+document.getElementById("loader").style.display="none";
+document.getElementById("system").style.display="block";
+typeEffect("WELCOME FERAS");
+}
+},1000);
+
+/* كتابة */
+function typeEffect(text){
+let i=0;
+let speed=70;
+document.getElementById("typing").setAttribute("data-text",text);
+function typing(){
+if(i<text.length){
+document.getElementById("typing").innerHTML+=text.charAt(i);
+i++;
+setTimeout(typing,speed);
+}
+}
+typing();
+}
+
+/* وقت الدخول */
+document.getElementById("loginTime").innerText=
+"LOGIN TIME: "+new Date().toLocaleTimeString();
+
+/* صوت */
+function playSound(type){
+let ctx=new(window.AudioContext||window.webkitAudioContext)();
+let osc=ctx.createOscillator();
+osc.type="sine";
+osc.frequency.value=(type==="success")?900:180;
+osc.connect(ctx.destination);
+osc.start();
+setTimeout(()=>{osc.stop();},200);
+}
+
+function checkPassword(){
+let pass=document.getElementById("password").value;
+let msg=document.getElementById("msg");
+let box=document.getElementById("loginBox");
+
+if(pass==="جنتل مان"){
+msg.innerHTML="<span class='success'>ACCESS GRANTED</span>";
+playSound("success");
+setTimeout(()=>{
+box.style.display="none";
+document.getElementById("goalBox").style.display="block";
+},1000);
+}else{
+attempts--;
+msg.innerHTML="<span class='error'>ACCESS DENIED ("+attempts+" ATTEMPTS LEFT)</span>";
+playSound("error");
+box.classList.add("shake");
+setTimeout(()=>{box.classList.remove("shake");},300);
+
+if(attempts<=0){
+document.getElementById("loginBox").style.display="none";
+document.getElementById("locked").style.display="block";
+}
+}
+}
+
+function checkGoal(){
+let goal=document.getElementById("goal").value;
+let msg=document.getElementById("goalMsg");
+
+if(goal==="السيرفر"){
+msg.innerHTML="<span class='success'>MISSION CONFIRMED</span>";
+playSound("success");
+}else{
+msg.innerHTML="<span class='error'>INVALID OBJECTIVE</span>";
+playSound("error");
+}
+}
+</script>
+
+</body>
+</html>
