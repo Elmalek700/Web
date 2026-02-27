@@ -3,31 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>النظام العملياتي</title>
+<title>النظام المركزي</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Cairo:wght@600&display=swap" rel="stylesheet">
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
-
-*{margin:0;padding:0;box-sizing:border-box;}
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
-background:#000814;
-font-family:'Orbitron', monospace;
-color:#00e5ff;
+background:#020611;
 height:100vh;
 overflow:hidden;
-direction:rtl;
 display:flex;
 align-items:center;
 justify-content:center;
+direction:rtl;
+font-family:'Orbitron','Cairo',sans-serif;
+color:#00eaff;
 }
 
+/* شبكة خلفية احترافية */
+body::before{
+content:"";
+position:absolute;
+width:200%;
+height:200%;
+background:
+linear-gradient(rgba(0,234,255,.04) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,234,255,.04) 1px, transparent 1px);
+background-size:50px 50px;
+animation:gridMove 25s linear infinite;
+}
+
+@keyframes gridMove{
+from{transform:translate(0,0)}
+to{transform:translate(-50px,-50px)}
+}
+
+/* إطار HUD بزوايا مقصوصة */
 .system{
-width:95%;
+width:94%;
 height:92vh;
-border:1px solid #00e5ff;
-box-shadow:0 0 40px #00e5ff inset,0 0 25px #00e5ff;
 position:relative;
+padding:40px;
+clip-path:polygon(0 20px,20px 0,100% 0,100% calc(100% - 20px),
+calc(100% - 20px) 100%,0 100%);
+border:1px solid #00eaff;
+box-shadow:0 0 40px #00eaff inset,0 0 30px #00eaff;
+overflow:hidden;
+}
+
+/* تأثير مسح */
+.scan{
+position:absolute;
+width:100%;
+height:3px;
+background:linear-gradient(to right,transparent,#00eaff,transparent);
+top:-10px;
+animation:scanMove 6s linear infinite;
+}
+
+@keyframes scanMove{
+0%{top:-10px}
+100%{top:100%}
 }
 
 /* موجة */
@@ -36,73 +74,92 @@ position:absolute;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-width:80%;
-height:200px;
-opacity:.25;
+width:75%;
+height:180px;
+opacity:.18;
 }
 
-/* صندوق الأسئلة */
+/* المركز */
 .center{
 position:absolute;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
 text-align:center;
+width:100%;
 }
 
 .question{
-font-size:28px;
-letter-spacing:2px;
-margin-bottom:20px;
-text-shadow:0 0 20px #00e5ff;
+font-size:32px;
+letter-spacing:4px;
+margin-bottom:25px;
+text-shadow:0 0 25px #00eaff;
+min-height:45px;
 }
 
 input{
 background:transparent;
-border:1px solid #00e5ff;
+border:1px solid #00eaff;
 padding:12px;
-width:260px;
-color:#00e5ff;
+width:280px;
+color:#00eaff;
 text-align:center;
 font-size:18px;
 outline:none;
+letter-spacing:2px;
 }
 
 input:focus{
-box-shadow:0 0 15px #00e5ff;
+box-shadow:0 0 20px #00eaff;
 }
 
 .result{
 margin-top:20px;
-font-size:26px;
+font-size:28px;
 opacity:0;
-transition:opacity .6s;
+transition:opacity .5s;
 }
 
-.correct{
-color:#00ff99;
-text-shadow:0 0 20px #00ff99;
-}
+.correct{color:#00ff99;text-shadow:0 0 20px #00ff99;}
+.wrong{color:#ff0040;text-shadow:0 0 20px #ff0040;}
 
-.wrong{
-color:#ff0040;
-text-shadow:0 0 20px #ff0040;
+.shake{animation:shake .3s;}
+@keyframes shake{
+0%{transform:translateX(0)}
+25%{transform:translateX(-6px)}
+50%{transform:translateX(6px)}
+75%{transform:translateX(-6px)}
+100%{transform:translateX(0)}
 }
 
 /* القائمة الجانبية */
 .side-info{
 position:absolute;
-top:20%;
-right:40px;
-border-left:1px solid #00e5ff;
+top:18%;
+right:50px;
+border-left:2px solid #00eaff;
 padding-left:20px;
-text-align:right;
+font-size:14px;
+letter-spacing:2px;
 opacity:0;
 transition:opacity 1.5s;
 }
 
 .side-info div{
-margin-bottom:10px;
+margin-bottom:12px;
+}
+
+/* شريط الحالة */
+.status{
+position:absolute;
+bottom:0;
+width:100%;
+text-align:center;
+padding:10px;
+border-top:1px solid #00eaff;
+background:rgba(0,234,255,.05);
+font-size:13px;
+letter-spacing:3px;
 }
 
 /* رسائل النهاية */
@@ -111,23 +168,23 @@ position:absolute;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-font-size:30px;
+font-size:34px;
 opacity:0;
 transition:opacity 1.5s;
-text-shadow:0 0 25px #00e5ff;
+text-shadow:0 0 30px #00eaff;
 }
-
 </style>
 </head>
 <body>
 
 <div class="system">
 
+<div class="scan"></div>
 <canvas id="wave"></canvas>
 
 <div class="center">
 <div class="question" id="questionText"></div>
-<input type="text" id="answerInput" autocomplete="off">
+<input type="text" id="answerInput">
 <div class="result" id="resultIcon"></div>
 </div>
 
@@ -136,13 +193,14 @@ text-shadow:0 0 25px #00e5ff;
 <div>مبرمج</div>
 </div>
 
+<div class="status">SECURE CHANNEL ACTIVE</div>
+
 <div class="message" id="welcomeMsg">مرحباً Feras</div>
 <div class="message" id="finalMsg">انتهت عملية الاستضافة</div>
 
 </div>
 
 <script>
-/* موجة صوت */
 const canvas=document.getElementById("wave");
 const ctx=canvas.getContext("2d");
 canvas.width=canvas.offsetWidth;
@@ -152,18 +210,20 @@ function draw(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.beginPath();
 for(let x=0;x<canvas.width;x++){
-let y=canvas.height/2+Math.sin((x+Date.now()/8)*0.02)*30;
+let y=canvas.height/2+Math.sin((x+Date.now()/8)*0.02)*25;
 ctx.lineTo(x,y);
 }
-ctx.strokeStyle="#00e5ff";
-ctx.shadowBlur=20;
-ctx.shadowColor="#00e5ff";
+ctx.strokeStyle="#00eaff";
+ctx.shadowBlur=15;
+ctx.shadowColor="#00eaff";
 ctx.stroke();
 requestAnimationFrame(draw);
 }
 draw();
 
-/* الأسئلة */
+const correctSound=new Audio("https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3");
+const wrongSound=new Audio("https://assets.mixkit.co/sfx/preview/mixkit-error-bleep-980.mp3");
+
 const questions=[
 {q:"السؤال",a:"المقام"},
 {q:"العاصفة",a:"الصور"},
@@ -178,8 +238,18 @@ const sideInfo=document.getElementById("sideInfo");
 const welcome=document.getElementById("welcomeMsg");
 const finalMsg=document.getElementById("finalMsg");
 
+function typeText(text,el){
+el.textContent="";
+let i=0;
+let interval=setInterval(()=>{
+el.textContent+=text[i];
+i++;
+if(i>=text.length)clearInterval(interval);
+},60);
+}
+
 function ask(){
-questionText.textContent=questions[current].q;
+typeText(questions[current].q,questionText);
 input.value="";
 input.focus();
 }
@@ -191,9 +261,13 @@ let val=input.value.trim();
 if(val===questions[current].a){
 result.innerHTML="✔";
 result.className="result correct";
+correctSound.play();
 }else{
 result.innerHTML="✖";
 result.className="result wrong";
+wrongSound.play();
+input.classList.add("shake");
+setTimeout(()=>input.classList.remove("shake"),300);
 }
 result.style.opacity=1;
 
@@ -203,13 +277,13 @@ current++;
 if(current<questions.length){
 ask();
 }else{
-finishSequence();
+finish();
 }
 },1200);
 }
 });
 
-function finishSequence(){
+function finish(){
 document.querySelector(".center").style.display="none";
 sideInfo.style.opacity=1;
 
