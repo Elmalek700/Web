@@ -3,281 +3,225 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CLASSIFIED SYSTEM</title>
+<title>النظام العملياتي</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Courier New, monospace;}
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
 body{
 background:#000814;
-color:#00bfff;
+font-family:'Orbitron', monospace;
+color:#00e5ff;
 height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
 overflow:hidden;
-}
-
-/* خلفية خطوط */
-body::before{
-content:"";
-position:absolute;
-width:200%;
-height:200%;
-background: repeating-linear-gradient(
-0deg,
-rgba(0,191,255,0.05) 0px,
-rgba(0,191,255,0.05) 2px,
-transparent 2px,
-transparent 40px
-);
-animation: scan 6s linear infinite;
-}
-@keyframes scan{
-from{ transform:translateY(-50%);}
-to{ transform:translateY(0%);}
-}
-
-.container{
-position:relative;
-z-index:2;
-text-align:center;
-width:90%;
-max-width:550px;
-}
-
-/* Loader */
-#loader h1{margin-bottom:20px;}
-.countdown{font-size:50px;}
-
-/* موجات */
-.wave{
+direction:rtl;
 display:flex;
+align-items:center;
 justify-content:center;
-align-items:flex-end;
-gap:6px;
-margin-bottom:30px;
-}
-.bar{
-width:6px;
-height:30px;
-background:#00bfff;
-box-shadow:0 0 15px #00bfff;
-animation:wave 1.2s infinite ease-in-out;
-}
-.bar:nth-child(2){animation-delay:.1s}
-.bar:nth-child(3){animation-delay:.2s}
-.bar:nth-child(4){animation-delay:.3s}
-.bar:nth-child(5){animation-delay:.4s}
-.bar:nth-child(6){animation-delay:.5s}
-.bar:nth-child(7){animation-delay:.6s}
-@keyframes wave{
-0%,100%{height:20px}
-50%{height:90px}
 }
 
-h1{
-margin-bottom:20px;
-text-shadow:0 0 20px #00bfff;
-}
-
-/* Glitch */
-.glitch{
+.system{
+width:95%;
+height:92vh;
+border:1px solid #00e5ff;
+box-shadow:0 0 40px #00e5ff inset,0 0 25px #00e5ff;
 position:relative;
 }
-.glitch::before,
-.glitch::after{
-content:attr(data-text);
+
+/* موجة */
+canvas{
 position:absolute;
-left:0;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:80%;
+height:200px;
+opacity:.25;
 }
-.glitch::before{
-animation:glitchTop 1s infinite linear alternate-reverse;
-color:#00ffff;
+
+/* صندوق الأسئلة */
+.center{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+text-align:center;
 }
-.glitch::after{
-animation:glitchBottom 1s infinite linear alternate-reverse;
-color:#0088ff;
-}
-@keyframes glitchTop{
-0%{clip-path:inset(0 0 80% 0)}
-100%{clip-path:inset(0 0 10% 0)}
-}
-@keyframes glitchBottom{
-0%{clip-path:inset(80% 0 0 0)}
-100%{clip-path:inset(10% 0 0 0)}
+
+.question{
+font-size:28px;
+letter-spacing:2px;
+margin-bottom:20px;
+text-shadow:0 0 20px #00e5ff;
 }
 
 input{
-width:100%;
-padding:10px;
 background:transparent;
-border:1px solid #00bfff;
-color:#00bfff;
+border:1px solid #00e5ff;
+padding:12px;
+width:260px;
+color:#00e5ff;
 text-align:center;
-box-shadow:0 0 10px #00bfff;
+font-size:18px;
+outline:none;
 }
 
-button{
-width:100%;
-margin-top:15px;
-padding:10px;
-background:#00bfff;
-border:none;
-cursor:pointer;
-font-weight:bold;
-color:black;
+input:focus{
+box-shadow:0 0 15px #00e5ff;
 }
 
-.message{margin-top:15px;}
-.success{color:#00ff99;}
-.error{color:#ff3b3b;}
-
-/* اهتزاز */
-.shake{animation:shake .3s;}
-@keyframes shake{
-0%{transform:translateX(0)}
-25%{transform:translateX(-6px)}
-50%{transform:translateX(6px)}
-75%{transform:translateX(-6px)}
-100%{transform:translateX(0)}
-}
-
-.locked{
-color:red;
-font-size:22px;
+.result{
 margin-top:20px;
+font-size:26px;
+opacity:0;
+transition:opacity .6s;
 }
+
+.correct{
+color:#00ff99;
+text-shadow:0 0 20px #00ff99;
+}
+
+.wrong{
+color:#ff0040;
+text-shadow:0 0 20px #ff0040;
+}
+
+/* القائمة الجانبية */
+.side-info{
+position:absolute;
+top:20%;
+right:40px;
+border-left:1px solid #00e5ff;
+padding-left:20px;
+text-align:right;
+opacity:0;
+transition:opacity 1.5s;
+}
+
+.side-info div{
+margin-bottom:10px;
+}
+
+/* رسائل النهاية */
+.message{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:30px;
+opacity:0;
+transition:opacity 1.5s;
+text-shadow:0 0 25px #00e5ff;
+}
+
 </style>
 </head>
-
 <body>
-<div class="container">
 
-<!-- Loader -->
-<div id="loader">
-<h1>Establishing Secure Connection...</h1>
-<div class="countdown" id="count">3</div>
+<div class="system">
+
+<canvas id="wave"></canvas>
+
+<div class="center">
+<div class="question" id="questionText"></div>
+<input type="text" id="answerInput" autocomplete="off">
+<div class="result" id="resultIcon"></div>
 </div>
 
-<!-- System -->
-<div id="system" style="display:none;">
-
-<div class="wave">
-<div class="bar"></div><div class="bar"></div><div class="bar"></div>
-<div class="bar"></div><div class="bar"></div><div class="bar"></div>
-<div class="bar"></div>
+<div class="side-info" id="sideInfo">
+<div>فارس البوت</div>
+<div>مبرمج</div>
 </div>
 
-<h1 class="glitch" id="typing" data-text=""></h1>
+<div class="message" id="welcomeMsg">مرحباً Feras</div>
+<div class="message" id="finalMsg">انتهت عملية الاستضافة</div>
 
-<p>IP: 192.168.47.221</p>
-<p>ACCESS LEVEL: CLASSIFIED</p>
-<p id="loginTime"></p>
-
-<div id="loginBox">
-<p>ENTER PASSWORD:</p>
-<input type="password" id="password">
-<button onclick="checkPassword()">AUTHENTICATE</button>
-<div id="msg" class="message"></div>
-</div>
-
-<div id="goalBox" style="display:none;">
-<p>MISSION OBJECTIVE:</p>
-<input type="text" id="goal">
-<button onclick="checkGoal()">VERIFY</button>
-<div id="goalMsg" class="message"></div>
-</div>
-
-<div id="locked" class="locked" style="display:none;">
-SYSTEM LOCKED
-</div>
-
-</div>
 </div>
 
 <script>
-let attempts=3;
+/* موجة صوت */
+const canvas=document.getElementById("wave");
+const ctx=canvas.getContext("2d");
+canvas.width=canvas.offsetWidth;
+canvas.height=canvas.offsetHeight;
 
-/* Countdown */
-let count=3;
-let counter=setInterval(()=>{
-count--;
-document.getElementById("count").innerText=count;
-if(count==0){
-clearInterval(counter);
-document.getElementById("loader").style.display="none";
-document.getElementById("system").style.display="block";
-typeEffect("WELCOME FERAS");
+function draw(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.beginPath();
+for(let x=0;x<canvas.width;x++){
+let y=canvas.height/2+Math.sin((x+Date.now()/8)*0.02)*30;
+ctx.lineTo(x,y);
 }
-},1000);
-
-/* كتابة */
-function typeEffect(text){
-let i=0;
-let speed=70;
-document.getElementById("typing").setAttribute("data-text",text);
-function typing(){
-if(i<text.length){
-document.getElementById("typing").innerHTML+=text.charAt(i);
-i++;
-setTimeout(typing,speed);
+ctx.strokeStyle="#00e5ff";
+ctx.shadowBlur=20;
+ctx.shadowColor="#00e5ff";
+ctx.stroke();
+requestAnimationFrame(draw);
 }
+draw();
+
+/* الأسئلة */
+const questions=[
+{q:"السؤال",a:"المقام"},
+{q:"العاصفة",a:"الصور"},
+{q:"كم",a:"واحد"}
+];
+
+let current=0;
+const questionText=document.getElementById("questionText");
+const input=document.getElementById("answerInput");
+const result=document.getElementById("resultIcon");
+const sideInfo=document.getElementById("sideInfo");
+const welcome=document.getElementById("welcomeMsg");
+const finalMsg=document.getElementById("finalMsg");
+
+function ask(){
+questionText.textContent=questions[current].q;
+input.value="";
+input.focus();
 }
-typing();
+ask();
+
+input.addEventListener("keydown",e=>{
+if(e.key==="Enter"){
+let val=input.value.trim();
+if(val===questions[current].a){
+result.innerHTML="✔";
+result.className="result correct";
+}else{
+result.innerHTML="✖";
+result.className="result wrong";
 }
+result.style.opacity=1;
 
-/* وقت الدخول */
-document.getElementById("loginTime").innerText=
-"LOGIN TIME: "+new Date().toLocaleTimeString();
-
-/* صوت */
-function playSound(type){
-let ctx=new(window.AudioContext||window.webkitAudioContext)();
-let osc=ctx.createOscillator();
-osc.type="sine";
-osc.frequency.value=(type==="success")?900:180;
-osc.connect(ctx.destination);
-osc.start();
-setTimeout(()=>{osc.stop();},200);
-}
-
-function checkPassword(){
-let pass=document.getElementById("password").value;
-let msg=document.getElementById("msg");
-let box=document.getElementById("loginBox");
-
-if(pass==="جنتل مان"){
-msg.innerHTML="<span class='success'>ACCESS GRANTED</span>";
-playSound("success");
 setTimeout(()=>{
-box.style.display="none";
-document.getElementById("goalBox").style.display="block";
-},1000);
+result.style.opacity=0;
+current++;
+if(current<questions.length){
+ask();
 }else{
-attempts--;
-msg.innerHTML="<span class='error'>ACCESS DENIED ("+attempts+" ATTEMPTS LEFT)</span>";
-playSound("error");
-box.classList.add("shake");
-setTimeout(()=>{box.classList.remove("shake");},300);
+finishSequence();
+}
+},1200);
+}
+});
 
-if(attempts<=0){
-document.getElementById("loginBox").style.display="none";
-document.getElementById("locked").style.display="block";
-}
-}
-}
+function finishSequence(){
+document.querySelector(".center").style.display="none";
+sideInfo.style.opacity=1;
 
-function checkGoal(){
-let goal=document.getElementById("goal").value;
-let msg=document.getElementById("goalMsg");
-
-if(goal==="السيرفر"){
-msg.innerHTML="<span class='success'>MISSION CONFIRMED</span>";
-playSound("success");
-}else{
-msg.innerHTML="<span class='error'>INVALID OBJECTIVE</span>";
-playSound("error");
-}
+setTimeout(()=>{
+welcome.style.opacity=1;
+setTimeout(()=>{
+welcome.style.opacity=0;
+setTimeout(()=>{
+finalMsg.style.opacity=1;
+},1500);
+},2000);
+},1500);
 }
 </script>
 
